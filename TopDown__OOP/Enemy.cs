@@ -44,7 +44,6 @@ namespace TopDown__OOP
         {
             if (isAttack == true)
             {
-                //Console.WriteLine("атака");
                 RunAnim();
             }
             else
@@ -57,10 +56,14 @@ namespace TopDown__OOP
         public override void Attack()
         {
             isAttack = true;
+            //Console.WriteLine("атака");
+
         }
-        
+
         public void SetDefault()
         {
+            //Console.WriteLine("не атака");
+
             isAttack = false;
             //Condition = 0;
         }

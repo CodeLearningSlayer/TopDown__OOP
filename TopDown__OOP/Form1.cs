@@ -13,7 +13,7 @@ namespace TopDown__OOP
     public partial class Form1 : Form
     {
         Game Shooter;
-        
+        Graphics gr;
         public Form1()
         {
             InitializeComponent();
@@ -22,6 +22,7 @@ namespace TopDown__OOP
                           ControlStyles.AllPaintingInWmPaint,
                           true);
             this.UpdateStyles();
+        
         }
         
         private void Form1_Load(object sender, EventArgs e)
@@ -41,6 +42,7 @@ namespace TopDown__OOP
         {
             //метод отправки в Game
             //direction 
+            
             if (e.KeyCode == Keys.W)
             {
                 Player.goUp = true;

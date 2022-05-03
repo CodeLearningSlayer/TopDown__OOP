@@ -21,6 +21,7 @@ namespace TopDown__OOP
         public bool isGunChosen;
         public static bool goUp;
         public static bool goDown;
+        public event Action onDie;  
         public int health;
         private List<GunEntity> guns;
         public GunEntity currGun;
@@ -47,7 +48,7 @@ namespace TopDown__OOP
             currGun = new Pistol(10, 15, 9, 5, G_Bitmap, 30);
             guns.Add(currGun);
             guns.Add(new Rifle(100, 15, 30, 6, G_Bitmap,40));
-
+            onDie += 
             t.Start();
             Condition = 0;
         }
@@ -127,15 +128,18 @@ namespace TopDown__OOP
 
         public override void Move()
         {
+            
             if (Player.goUp || Player.goDown) {
 
                 if (Player.goUp == true)
                 {
                     this.dirVector.Y = -1;
+                    Console.WriteLine("move");
                 }
                 if (Player.goDown == true)
                 {
                     this.dirVector.Y = 1;
+                    Console.WriteLine("move");
                 }
             }
             else
@@ -187,6 +191,10 @@ namespace TopDown__OOP
         public void GetHit(int damage)
         {
             health -= damage;
+            if (health < 0)
+            {
+                Application.Exit();
+            }
         }
 
         public void ChangeGun(string gun)

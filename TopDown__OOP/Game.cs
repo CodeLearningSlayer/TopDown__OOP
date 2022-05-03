@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Windows.Forms;
 using System.Linq;
 using System.Text;
 
-using System.Windows.Forms;
 
 namespace TopDown__OOP
 {
@@ -24,7 +24,9 @@ namespace TopDown__OOP
         Graphics G_Bitmap;
         Graphics G_Form;
         public event Action onCollision;
+        Graphics gr;
         public event Action offCollision;
+        public Rectangle healthBar;
         public delegate void MakeShot(double x, double y, int dx, int dy);
         public event MakeShot onAttack;
         public delegate void onHit(int damage);
@@ -34,6 +36,7 @@ namespace TopDown__OOP
         public Game(Form form)
         {
             this.form1 = form;
+            healthBar = new Rectangle(580, 20, 200, 20);
             this.score = 0;
             this.ammo = 0;
             this.form1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.GetAttack);
@@ -47,9 +50,12 @@ namespace TopDown__OOP
             upd = new Timer();
             upd.Interval = 40;
             upd.Tick += new EventHandler(updateTimer);
+            Timer healthTime = new Timer();
+            
             this.form1.KeyDown += new KeyEventHandler(this.ChangeGun);
             this.hero = null;
             this.Background = Properties.Resources.background;
+            gr = form1.CreateGraphics();
 
         }
 
@@ -64,11 +70,17 @@ namespace TopDown__OOP
             G_Bitmap.DrawImage(Background, new Point(0, 0));
         }
 
+        public void DrawHealth()
+        {
+            G_Bitmap.DrawRectangle(new Pen(Brushes.DarkRed), healthBar);
+            G_Bitmap.FillRectangle(Brushes.Red, new Rectangle(healthBar.X, healthBar.Y, healthBar.Width * (hero.health) / 100, healthBar.Height));
+        }
+
 
         public void spawnEnemy(object sender, EventArgs eArgs)
         {
             var rand = new Random();
-            Enemy enemy = new Enemy(rand.Next(1025), rand.Next(750,768), 0,0, G_Bitmap);
+            Enemy enemy = new Enemy(rand.Next(1025), (rand.Next(2) == 0 ? rand.Next(-50, -10) : rand.Next(750,768)), 0,0, G_Bitmap);
             onCollision += enemy.Attack;
             offCollision += enemy.SetDefault;
             hit += enemy.GetHit;
@@ -107,7 +119,6 @@ namespace TopDown__OOP
                         hero.currGun.bullets.Remove(hero.currGun.bullets[i]);
                 }
 
-
             }
         }
 
@@ -136,6 +147,7 @@ namespace TopDown__OOP
         {
             G_Form.DrawImage(Images, new Point(0, 0));
             this.DrawBg();
+
             foreach (BaseCharacter entity in entities)
             {
                 if (entity is Enemy) 
@@ -155,6 +167,7 @@ namespace TopDown__OOP
                 }
                 
             }
+            DrawHealth();
             collisionCheck();
         }
 
