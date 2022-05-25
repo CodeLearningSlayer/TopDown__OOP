@@ -8,21 +8,22 @@ using System.Windows.Forms;
 
 namespace TopDown__OOP
 {
+    [Serializable]
     public abstract class GunEntity
     {
         public int damage;
         public int rangeOfAttack;
-        public int ammo;
+        public virtual int ammo { get; set; }
         public int currAmmo;
         public int reloadTime;
         public int bulletSpeed;
-        public List<Bullet> bullets;
-        public Timer testFlight;
-        Timer reload;
+        [NonSerialized] public List<Bullet> bullets;
+        [NonSerialized] public Timer testFlight;
+        [NonSerialized] Timer reload;
         public GunEntity(int damage, int rangeOfAttack, int ammo, int reloadTime, int speed)
         {
-            testFlight = new Timer();
             bullets = new List<Bullet>();
+            testFlight = new Timer();
             testFlight.Tick += new EventHandler(DrawBullets);
             testFlight.Interval = 40;
             this.damage = damage;
@@ -33,7 +34,7 @@ namespace TopDown__OOP
             this.bulletSpeed = speed;
             reload = new Timer();
             reload.Tick += new EventHandler(Reloading);
-            reload.Interval = reloadTime;
+            reload.Interval = 40;
         }
         
         public void Reload()
@@ -52,10 +53,16 @@ namespace TopDown__OOP
             reload.Stop();
         }
 
-        public  void DrawBullets(object sender, EventArgs eArgs)
+        public void CreateBullets()
         {
-            //Console.WriteLine(Thread.CurrentThread.ManagedThreadId);
+            this.bullets = new List<Bullet>();
+        }
 
+        public abstract void CreateBullet();
+        
+        public void DrawBullets(object sender, EventArgs eArgs)
+        {
+            
             foreach (Bullet bullet in bullets.ToArray())
             {
                 if (bullet.lifeTime < 200)
@@ -67,10 +74,17 @@ namespace TopDown__OOP
                 else
                 {
                     bullets.Remove(bullet);
+                    Console.WriteLine("уничтожил");
                 }
 
             }
 
+        }
+        public void CreateTimer()
+        {
+            testFlight = new Timer();
+            testFlight.Tick += new EventHandler(DrawBullets);
+            testFlight.Interval = 30;
         }
     }
 }

@@ -11,16 +11,18 @@ using System.Windows;
 
 
 namespace TopDown__OOP
-{
+{   
+    [Serializable]
     public abstract class BaseCharacter
     {
-        protected Graphics G_Bitmap;
+        [NonSerialized] protected Graphics G_Bitmap;
         public int reloadTime;
         public double x { get; set; }
         public double y { get; set; }
         public int currAnimation;
         public RectangleF hitbox_base;
         public Rectangle hitbox;
+        public bool isAttack { get; set; }
         public Vector dirVector;
         public int health;
         public int dx, dy;
@@ -33,10 +35,19 @@ namespace TopDown__OOP
             this.dx = dx;
             this.dy = dy;
             this.G_Bitmap = G_Bitmap;
+            this.isAttack = false;
+        }
+
+        public void GetHit(int damage)
+        {
+            health -= damage;
         }
         public abstract void Move();
 
-        public abstract void Attack();
+        public virtual void Attack(bool isAtt)
+        {
+            this.isAttack = isAtt;
+        }
 
         public abstract void RunAnim();
 
@@ -44,5 +55,9 @@ namespace TopDown__OOP
 
         public abstract void Die();
         
+        public virtual void CreateGraphics(Graphics G_Bitmap)
+        {
+            this.G_Bitmap = G_Bitmap;
+        }
     }
 }

@@ -14,7 +14,7 @@ namespace TopDown__OOP
 {
     public class Bullet
     {
-        private Graphics G_Bitmap;
+        private static Graphics G_Bitmap;
         public double x { get; set; }
         public double y { get; set; }
         Vector bulletDir;
@@ -42,13 +42,10 @@ namespace TopDown__OOP
             //renderThread = new Thread(new ThreadStart(Draw));
             //renderThread.Start();
             this.speed = speed;
-            this.G_Bitmap = G_Bitmap;
         }
 
-        public void Hit()
-        {
-
-        }
+        
+       
         public void MakeBullet()
         {
             
@@ -81,11 +78,11 @@ namespace TopDown__OOP
                 this.hitbox.Y = (int)this.y;
                 G_Bitmap.DrawRectangle(Pens.Red, this.hitbox);
             }
-
-
-
-
-
         }
+        public static void CreateGraphics(Graphics G_Bitmap)
+        {
+            Bullet.G_Bitmap = G_Bitmap;
+        }
+        
     }
 }

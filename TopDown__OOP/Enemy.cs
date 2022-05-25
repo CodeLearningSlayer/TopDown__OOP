@@ -12,14 +12,17 @@ using System.Windows.Forms;
 
 namespace TopDown__OOP
 {
+    [Serializable]
     class Enemy : BaseCharacter
     {
-        Image EnemyImg;
-        System.Windows.Forms.Timer t;
-        GraphicsUnit units = GraphicsUnit.Point;
+        [NonSerialized]Image EnemyImg;
+        [NonSerialized]System.Windows.Forms.Timer t;
+        [NonSerialized]GraphicsUnit units = GraphicsUnit.Point;
         //public Vector dirVector;
-        public bool isAttack { get; set; }
+        //public bool isAttack { get; set; }
         int speed = 2;
+        private System.Drawing.Point drawPoint;
+
         public int Condition { get; set; }
         public Enemy(double x, double y, int dx, int dy, Graphics G_Bitmap) : base(x, y, dx, dy, G_Bitmap)
         {
@@ -36,9 +39,10 @@ namespace TopDown__OOP
             this.dirVector = new Vector(dx, dy);
             dirVector.Normalize();
             t.Tick += new EventHandler(t_tick);
-            t.Interval = 40;
+            t.Interval = 100;
             t.Start();
             Condition = 0;
+            isAttack = false;
         }
         protected void t_tick(object sender, EventArgs eArgs)
         {
@@ -53,24 +57,13 @@ namespace TopDown__OOP
                 //Console.WriteLine("не бьёт");
             }
         }
-        public override void Attack()
-        {
-            isAttack = true;
-            //Console.WriteLine("атака");
-
-        }
-
-        public void SetDefault()
-        {
-            //Console.WriteLine("не атака");
-
-            isAttack = false;
-            //Condition = 0;
-        }
+       
         
 
         public override void Draw()
         {
+            drawPoint.X = (int)this.x;
+            drawPoint.Y = (int)this.y;
             using (Bitmap Z = new Bitmap(65, 65))
             {
                 double zombieDir = Math.Atan2(this.dy, this.dx) * 180 / Math.PI + (89.5) * 180 / Math.PI;
@@ -80,11 +73,12 @@ namespace TopDown__OOP
                 Z_Gfx.TranslateTransform(-(float)Z.Width / 2, -(float)Z.Height / 2);
                 Z_Gfx.DrawImage(this.EnemyImg, new System.Drawing.Point(0, 0));
                 Z_Gfx.Dispose();
-                G_Bitmap.DrawImage(Z, new System.Drawing.Point((int)this.x, (int)this.y));
 
+                G_Bitmap.DrawImage(Z, drawPoint);
                 this.hitbox.X = (int)this.x;
                 this.hitbox.Y = (int)this.y;
                 G_Bitmap.DrawRectangle(Pens.Red, this.hitbox);
+                
 
             }
         }
@@ -127,14 +121,25 @@ namespace TopDown__OOP
         {
 
         }
-        public void GetHit(int damage)
+
+        public override void CreateGraphics(Graphics G_Bitmap)
         {
-                health -= damage;
+            base.CreateGraphics(G_Bitmap);
+            this.EnemyImg = Properties.Resources.zombie_1;
         }
+
         public override void Move()
         {
-            this.x += Math.Round(this.dirVector.X * speed);
-            this.y += Math.Round(this.dirVector.Y * speed);
+            if ( double.IsNaN(this.dirVector.X) == false && double.IsNaN(this.dirVector.Y) == false)
+            {
+                this.x += Math.Round(this.dirVector.X * speed);
+                this.y += Math.Round(this.dirVector.Y * speed);
+            }
+            else
+            {
+                this.x += 0;
+                this.y += 0;
+            }
         }
     }
 }

@@ -83,6 +83,26 @@ namespace TopDown__OOP.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap menu_background {
+            get {
+                object obj = ResourceManager.GetObject("menu_background", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Byte[].
+        /// </summary>
+        internal static byte[] Overdrive_Sunset {
+            get {
+                object obj = ResourceManager.GetObject("Overdrive_Sunset", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap pistol_bullet {
             get {
                 object obj = ResourceManager.GetObject("pistol_bullet", resourceCulture);

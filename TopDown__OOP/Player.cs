@@ -11,32 +11,32 @@ using System.Windows;
 
 
 namespace TopDown__OOP
-{
+{   
+    [Serializable]
     public class Player : BaseCharacter
     {
-        public Image PlayerImg;
-        System.Windows.Forms.Timer t;
+        [NonSerialized] public Image PlayerImg;
+        [NonSerialized] System.Windows.Forms.Timer t;
         public static bool goLeft;
         public static bool goRight;
         public bool isGunChosen;
         public static bool goUp;
         public static bool goDown;
         public event Action onDie;  
-        public int health;
-        private List<GunEntity> guns;
+        public List<GunEntity> guns;
         public GunEntity currGun;
-        GraphicsUnit units = GraphicsUnit.Point;
+        [NonSerialized] GraphicsUnit units = GraphicsUnit.Point;
         int speed = 5;
         public int Condition { get; set; }
         public Player(double x, double y, int dx, int dy, Graphics G_Bitmap) : base(x, y, dx, dy, G_Bitmap)
         {
             guns = new List<GunEntity>();
             this.PlayerImg = Properties.Resources.walk_1;
-            t = new System.Windows.Forms.Timer();
             currGun = null;
             this.hitbox_base = this.PlayerImg.GetBounds(ref units);
             this.hitbox = Rectangle.Round(this.hitbox_base);
             isGunChosen = false;
+            t = new System.Windows.Forms.Timer();
             t.Tick += new EventHandler(t_tick);
             t.Interval = 200;
             health = 100;
@@ -45,10 +45,9 @@ namespace TopDown__OOP
             this.dx = 0;
             this.dy = 0;
             dirVector = new Vector(dx, dy);
-            currGun = new Pistol(10, 15, 9, 5, G_Bitmap, 30);
+            currGun = new Pistol(10, 15, 100, 5, G_Bitmap, 30);
             guns.Add(currGun);
-            guns.Add(new Rifle(100, 15, 30, 6, G_Bitmap,40));
-            onDie += 
+            guns.Add(new Rifle(100, 15, 30, 6, G_Bitmap, 40));
             t.Start();
             Condition = 0;
         }
@@ -57,14 +56,15 @@ namespace TopDown__OOP
             this.RunAnim();
             // слежение за курсором
         }
-        public override void Attack()
-        {
-
-        }
+        //public override void Attack()
+        //{
+        //    //currGun.Shoot();
+        //}
 
         public override void Draw()
         {
-            using (Bitmap bmpToRotate = new Bitmap(this.PlayerImg.Width, this.PlayerImg.Height))
+            Bitmap bmpToRotate = new Bitmap(this.PlayerImg.Width, this.PlayerImg.Height);
+            using (bmpToRotate)
             {
                 double angle = Math.Atan2(this.dy, this.dx) * 180 / Math.PI + (-90) * Math.PI / 180;
                 //Console.WriteLine(dy);
@@ -82,6 +82,15 @@ namespace TopDown__OOP
                 G_Bitmap.DrawRectangle(Pens.Blue, this.hitbox);
             }
             //G_Bitmap.DrawImage(PlayerImg, new Point(this.x, this.y));
+        }
+
+        public void DrawAmmo(Font myFont)
+        {
+            if (currGun is Pistol)
+                G_Bitmap.DrawString("Ammo: " + currGun.currAmmo + "/" + "♾", myFont, new SolidBrush(Color.Red), new System.Drawing.Point(610, 50));
+            else
+                G_Bitmap.DrawString("Ammo: " + currGun.currAmmo + "/" + currGun.ammo, myFont, new SolidBrush(Color.Red), new System.Drawing.Point(610, 50));
+
         }
 
         public override void RunAnim()
@@ -129,24 +138,24 @@ namespace TopDown__OOP
         public override void Move()
         {
             
-            if (Player.goUp || Player.goDown) {
+            if (Player.goUp || goDown) {
 
                 if (Player.goUp == true)
                 {
                     this.dirVector.Y = -1;
-                    Console.WriteLine("move");
+                    
                 }
                 if (Player.goDown == true)
                 {
                     this.dirVector.Y = 1;
-                    Console.WriteLine("move");
+                    
                 }
             }
             else
             {
                 this.dirVector.Y = 0;
             }
-            if (Player.goLeft || Player.goRight) {
+            if (Player.goLeft || goRight) {
 
                 if (Player.goLeft == true)
                 {
@@ -252,6 +261,29 @@ namespace TopDown__OOP
         {
             guns.Add(gun);
             
+        }
+
+        public void CreateTimer()
+        {
+            t = new System.Windows.Forms.Timer();
+            t.Tick += new EventHandler(t_tick);
+            t.Interval = 200;
+        }
+        public override void CreateGraphics(Graphics G_Bitmap)
+        {
+            base.CreateGraphics(G_Bitmap);
+            this.PlayerImg = Properties.Resources.walk_1;
+            Bitmap bmpToRotate = new Bitmap(this.PlayerImg.Width, this.PlayerImg.Height);
+        }
+        
+        public void CreateBullets()
+        {
+            foreach (GunEntity entity in guns.ToArray())
+            {
+                entity.CreateBullets();
+                entity.CreateBullet();
+                entity.CreateTimer();
+            }
         }
 
     }

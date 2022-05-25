@@ -118,58 +118,64 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="background" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\imgonline-com-ua-Resize-StyfGOUAbhJ.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="gun_bullet" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\gun_bullet (1).png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="pistol_bullet" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\pistol_bullet (1) (1).png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="player_9mmhandgun" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\player_9mmhandgun.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="player_chaingun" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\player_chaingun.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="player_pumpgun_stand" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\player_pumpgun_stand.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="walk_1" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\walk_1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="walk_2" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\walk_2.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="walk_3" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\walk_3.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="walk_4" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\walk_4.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="walk_5" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\walk_5.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="zombie_6" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\zombie-6 (1).png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="walk_6" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\walk_6.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="zombie_3" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\zombie-3 (1).png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="zombie_1" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\zombie-1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="zombie_2" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\zombie-2 (1).png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="zombie_3" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\zombie-3 (1).png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="player_pumpgun_stand" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\player_pumpgun_stand.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="zombie_4" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\zombie-4 (1).png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="menu_background" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\menu_background (1).png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="walk_1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\walk_1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="background" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\imgonline-com-ua-Resize-StyfGOUAbhJ.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="walk_2" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\walk_2.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="gun_bullet" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\gun_bullet (1).png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="player_chaingun" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\player_chaingun.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="zombie_2" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\zombie-2 (1).png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="zombie_5" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\zombie-5 (1).png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="zombie_6" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\zombie-6 (1).png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="walk_5" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\walk_5.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="walk_3" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\walk_3.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="player_9mmhandgun" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\player_9mmhandgun.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="pistol_bullet" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\pistol_bullet (1) (1).png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="walk_4" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\walk_4.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Overdrive_Sunset" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Overdrive Sunset.otf;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
 </root>

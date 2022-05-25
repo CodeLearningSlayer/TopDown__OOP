@@ -4,33 +4,27 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.Drawing;
+using System.Threading;
 //using System.Windows.Forms;
 
 namespace TopDown__OOP
 {
+    [Serializable]
     public class Pistol:GunEntity
     {
-        Image bulletImg;
-        Graphics Map;
-        Bullet testBullet;
-        int elapsedTime;
-        int totalTime;
+        [NonSerialized] Image bulletImg;
+        [NonSerialized] Graphics Map;
+
         int speed;
 
         public Pistol(int damage, int rangeOfAttack, int ammo, int reloadTime, Graphics G_Bitmap, int speed) : base(damage, rangeOfAttack, ammo, reloadTime, speed)
         {
             
-            elapsedTime = 0;
-            totalTime = 3000;
-            //testFlight = new System.Windows.Forms.Timer();
-            //testFlight.Tick += new EventHandler(DrawBullets);
-            //testFlight.Interval = 40;
-
-            //bulletFlight.
+            
+           
             this.damage = damage;
             this.rangeOfAttack = rangeOfAttack;
             speed = 30;
-            this.ammo = ammo;
             Map = G_Bitmap;
             this.currAmmo = ammo;
             this.reloadTime = reloadTime;
@@ -38,18 +32,18 @@ namespace TopDown__OOP
         }
         public override void Shoot(double x, double y, int dx, int dy) // передавать координаты персонажа для выстрела
         {
-            //Console.WriteLine(dx);
-            //Console.WriteLine(dy);
             Console.WriteLine("Pistol shot");
             bullets.Add(new Bullet(x, y, dx, dy, speed, Map, bulletImg));
-            testBullet = new Bullet(x, y, dx, dy, speed, Map, bulletImg);
             testFlight.Start();
-            //bulletFlight.Enabled = true;
-            //DrawBullets();            
+            currAmmo -= 1;
         }
 
+        public override void CreateBullet()
+        {
+            bulletImg = Properties.Resources.pistol_bullet;
+        }
+  
         
 
-  
     }
 }
