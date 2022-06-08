@@ -16,16 +16,17 @@ namespace TopDown__OOP
     public abstract class BaseCharacter
     {
         [NonSerialized] protected Graphics G_Bitmap;
-        public int reloadTime;
-        public double x { get; set; }
-        public double y { get; set; }
+        public double x { get; protected set; }
+        public double y { get; protected set; }
         public int currAnimation;
         public RectangleF hitbox_base;
         public Rectangle hitbox;
-        public bool isAttack { get; set; }
+        public bool isAttack { get; protected set; }
         public Vector dirVector;
         public int health;
-        public int dx, dy;
+        public int dx { get; protected set; }
+        public int dy { get; protected set; }
+        public double speed;
         public delegate void Death(int Number);
         public Death OnDeath;
         public  BaseCharacter(double x, double y, int dx, int dy, Graphics G_Bitmap)
@@ -35,10 +36,10 @@ namespace TopDown__OOP
             this.dx = dx;
             this.dy = dy;
             this.G_Bitmap = G_Bitmap;
-            this.isAttack = false;
+            
         }
 
-        public void GetHit(int damage)
+        public virtual void GetHit(int damage)
         {
             health -= damage;
         }
@@ -48,12 +49,23 @@ namespace TopDown__OOP
         {
             this.isAttack = isAtt;
         }
+        public void SetDirection(int dirX, int dirY)
+        {
+            this.dx = dirX;
+            this.dy = dirY;
+        }
 
-        public abstract void RunAnim();
+        public void SetVector(double vX = 0 , double vY = 0)
+        {
+            dirVector.X = vX;
+            dirVector.Y = vY;
+            dirVector.Normalize();
+        }
+        protected abstract void RunAnim();
 
         public abstract void Draw();
 
-        public abstract void Die();
+        //public abstract void Die();
         
         public virtual void CreateGraphics(Graphics G_Bitmap)
         {

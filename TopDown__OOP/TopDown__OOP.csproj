@@ -161,9 +161,6 @@
     <None Include="Resources\player_9mmhandgun.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\player_chaingun.png" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Resources\player_pumpgun_stand.png" />
   </ItemGroup>
   <ItemGroup>
@@ -189,6 +186,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\menu_background %281%291.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\player_chaingun.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

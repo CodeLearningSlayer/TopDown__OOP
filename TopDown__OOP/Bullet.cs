@@ -15,15 +15,15 @@ namespace TopDown__OOP
     public class Bullet
     {
         private static Graphics G_Bitmap;
-        public double x { get; set; }
-        public double y { get; set; }
+        private double x { get; set; }
+        private double y { get; set; }
         Vector bulletDir;
         public int speed;
         public RectangleF hitbox_base;
-        Image bulletImg; 
         public Rectangle hitbox;
+        Image bulletImg; 
         GraphicsUnit units = GraphicsUnit.Point;
-        public int dx, dy;
+        private int dx, dy;
         public int lifeTime;
 
         public Bullet(double x, double y, int dx, int dy, int speed, Graphics G_Bitmap, Image bulletImg)
@@ -53,7 +53,7 @@ namespace TopDown__OOP
         public void Move()
         {
             //this.x += speed * dx;
-            this.x += 30*bulletDir.X;
+            this.x += 30 * bulletDir.X;
             this.y += 30 * bulletDir.Y;
 
             //this.y += speed * dy;
@@ -76,7 +76,6 @@ namespace TopDown__OOP
                 G_Bitmap.DrawImage(bulletMap, new System.Drawing.Point((int)x, (int)y));
                 this.hitbox.X = (int)this.x;
                 this.hitbox.Y = (int)this.y;
-                G_Bitmap.DrawRectangle(Pens.Red, this.hitbox);
             }
         }
         public static void CreateGraphics(Graphics G_Bitmap)

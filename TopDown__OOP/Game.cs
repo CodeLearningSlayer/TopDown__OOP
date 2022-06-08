@@ -14,45 +14,48 @@ using System.Runtime.InteropServices;
 namespace TopDown__OOP
 {
     [Serializable]
-    public class Game
+    public class Game:IDisposable
     {
-        [NonSerialized] private List<BaseCharacter> entities;
+        [NonSerialized] public List<BaseCharacter> entities;
         public Player hero;
         [NonSerialized] public Timer upd;
         [NonSerialized] public Timer spawnTimer;
         [NonSerialized] Timer waveTimer;
-        int score;
-        [NonSerialized] Form form1;
-        int ammo;
-        int difficulty;
-        int diffTime = 0;
-        int wave;
-        Font myFont;
-        Font newWaveFont;
-        Font ammoFont;
-        PrivateFontCollection private_fonts = new PrivateFontCollection();
+        [NonSerialized] public Timer deathTimer;
+        public int score { get; set; }
+        public bool isGameOver = false;
+        private int blinkTime;
+        public bool canISave; 
+        public int difficulty;
+        private bool _isDisposed = false;
+        private int diffTime = 0;
+        private int wave;
+        public string chngGun;
+        private Font myFont;
+        private Font newWaveFont;
+        public bool isSerialized = false;
+        private Font ammoFont;
+        [NonSerialized] private PrivateFontCollection private_fonts = new PrivateFontCollection();
         private int attackTime;
-        [NonSerialized] Bitmap Images = new Bitmap(1024, 768);
-        [NonSerialized] Graphics G_Bitmap;
-        [NonSerialized] Graphics G_Form;
-        [NonSerialized] public Rectangle healthBar;
+        [NonSerialized] private Bitmap Images = new Bitmap(1024, 768);
+        [NonSerialized] private Graphics G_Bitmap;
+        [NonSerialized] public Graphics G_Form;
+        [NonSerialized] private Rectangle healthBar;
         public delegate void MakeShot(double x, double y, int dx, int dy);
         public event MakeShot onAttack;
-        public delegate void onHit(int damage);
-        [NonSerialized] protected Graphics G_Gamemap;
-        [NonSerialized] Image Background;
-        public Game(Form form)
+        //public delegate void onHit(int damage);
+        [NonSerialized] private Image Background;
+        public Game(Graphics G_Form)
         {
-            this.form1 = form;
+            
             healthBar = new Rectangle(580, 20, 200, 20);
             this.score = 0;
-            this.ammo = 0;
             difficulty = 20;
+            this.G_Form = G_Form;
+            chngGun = "pistol";
             wave = 0;
-            this.form1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.GetAttack);
-            G_Form = form.CreateGraphics();
             G_Bitmap = Graphics.FromImage(Images);
-            G_Form.DrawImage(Images, new Point(0, 0));
+            this.G_Form.DrawImage(Images, new Point(0, 0));
             this.entities = new List<BaseCharacter>();
             spawnTimer = new Timer();
             spawnTimer.Interval = 2000;
@@ -64,23 +67,47 @@ namespace TopDown__OOP
             waveTimer.Interval = 30;
             waveTimer.Tick += new EventHandler(changeLevel);
             Timer healthTime = new Timer();
-            this.form1.KeyDown += new KeyEventHandler(this.ChangeGun);
             this.hero = null;
             this.Background = Properties.Resources.background;
             this.hero = new Player(370, 170, 0, 0, G_Bitmap);
             Bullet.CreateGraphics(G_Bitmap);
             LoadFont();
+            hero.onDie += showDeathScreen;
+            deathTimer = new Timer();
+            deathTimer.Interval = 40;
+            deathTimer.Tick += new EventHandler(drawDeathScreen);
         }
 
-        public void DrawBg()
+        private void DrawBg()
         {
             G_Bitmap.DrawImage(Background, new Point(0, 0));
         }
 
-        public void DrawHealth()
+        private void DrawHealth()
         {
             G_Bitmap.DrawRectangle(new Pen(Brushes.DarkRed), healthBar);
             G_Bitmap.FillRectangle(Brushes.Red, new Rectangle(healthBar.X, healthBar.Y, healthBar.Width * (hero.health) / 100, healthBar.Height));
+        }
+
+        private void showDeathScreen()
+        {
+            if (entities != null)
+            entities.Clear();
+            spawnTimer.Stop();
+            isGameOver = true;
+            deathTimer.Start();
+        }
+
+        private void drawDeathScreen(object sender, EventArgs e)
+        {
+            
+            G_Bitmap.DrawString("Game Over", newWaveFont, new SolidBrush(Color.Red), new Point(220, 150));
+            blinkTime += 1;
+            if (blinkTime > 5 && blinkTime < 20)
+            {
+                G_Bitmap.DrawString("Press Enter to play again", myFont, new SolidBrush(Color.Red), new Point(230, 240));
+            }
+            else if (blinkTime == 20) blinkTime = 0;
         }
 
         private void LoadFont()
@@ -107,12 +134,12 @@ namespace TopDown__OOP
             }
         }
 
-        public void DrawScore()
+        private void DrawScore()
         {
             G_Bitmap.DrawString(score + "/" + difficulty, myFont, new SolidBrush(Color.Red), new Point(340, 10));
         }
 
-        public void DrawCurrentWave()
+        private void DrawCurrentWave()
         {
             G_Bitmap.DrawString("wave " + (int)(wave + 1), myFont, new SolidBrush(Color.Red), new Point(50, 10));
         }
@@ -120,7 +147,7 @@ namespace TopDown__OOP
         private void DrawNewWave()
         {
             G_Bitmap.DrawString("wave " + (int)(wave + 1), newWaveFont, new SolidBrush(Color.Red), new Point(270, 200));
-            G_Bitmap.DrawString("Press 5 if you want to save", myFont, new SolidBrush(Color.Red), new Point(140, 330));
+            G_Bitmap.DrawString("Press 5 if you want to save", myFont, new SolidBrush(Color.Red), new Point(210, 350));
         }
 
         private void changeLevel(object sender, EventArgs e)
@@ -132,14 +159,39 @@ namespace TopDown__OOP
             else
             {
                 waveTimer.Stop();
+                canISave = false;
+                hero.AddAmmo();
                 diffTime = -40;
                 spawnTimer.Start();
             }
             diffTime += 40;
             
         }
+        public void Dispose()
+        {
+            Dispose(true);
+            
+            GC.SuppressFinalize(this);
+        }
 
-        public void spawnEnemy(object sender, EventArgs eArgs)
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                onAttack = null;
+                if (!_isDisposed)
+                {
+                    _isDisposed = true;
+                    return;
+                }
+            }
+        }
+        ~Game()
+        {
+            Console.WriteLine("Was disposed");
+        }
+
+        private void spawnEnemy(object sender, EventArgs eArgs)
         {
             var rand = new Random();
             Enemy enemy = new Enemy(rand.Next(1025), (rand.Next(2) == 0 ? rand.Next(-50, -10) : rand.Next(750, 768)), 0, 0, G_Bitmap);
@@ -150,8 +202,16 @@ namespace TopDown__OOP
         }
         public void createObjects()
         {
+            //onAttack = null;
             //this.hero = new Player(370, 170, 0, 0, G_Bitmap);
-            onAttack += hero.currGun.Shoot;
+            if (isSerialized == false)
+                onAttack += hero.currGun.Shoot;
+            else
+            {
+                onAttack = null;
+                onAttack += hero.currGun.Shoot;
+            }
+            hero.initGame(this);
             this.entities.Add(this.hero);
             spawnTimer.Start();
         }
@@ -164,6 +224,7 @@ namespace TopDown__OOP
                 DeleteEnemies();
                 spawnTimer.Interval -= 300;
                 waveTimer.Start();
+                canISave = true;
                 wave += 1;
                 score = 0;
                 difficulty = (int)Math.Round(difficulty*1.5);
@@ -188,7 +249,7 @@ namespace TopDown__OOP
                     attackTime += 1;
                     if (attackTime==10)
                     {
-                        hero.GetHit(hero.currGun.damage);
+                        hero.GetHit(10);
                         attackTime = 0;
                     }
                     entity.Attack(true);
@@ -220,33 +281,39 @@ namespace TopDown__OOP
             }
         }
 
-        private void ChangeGun(object sender, KeyEventArgs e)
+
+        
+        public void KeyDown(object sender, KeyEventArgs e)
         {
-            onAttack -= hero.currGun.Shoot;
             if (e.KeyCode == Keys.D1)
             {
-                this.hero.ChangeGun("pistol");
+                onAttack = null;
+                chngGun = "pistol";
+                this.hero.ChangeGun(chngGun);
             }
             else if (e.KeyCode == Keys.D2)
             {
-                this.hero.ChangeGun("rifle");
+                onAttack = null;
+                chngGun = "rifle";
+                this.hero.ChangeGun(chngGun);
+                
             }
             else if (e.KeyCode == Keys.D3)
             {
-                this.hero.ChangeGun("shotgun");
+                chngGun = "shotgun";
+                this.hero.ChangeGun(chngGun);
             }
             else if (e.KeyCode == Keys.D4)
             {
-                this.hero.ChangeGun("no gun");
+                chngGun = "no gun";
+                this.hero.ChangeGun(chngGun);
             }
             else if (e.KeyCode == Keys.R) //перезарядка
             {
-
+                hero.checkAmmo(this, true);
             }
-            onAttack += hero.currGun.Shoot;
-
         }
-        protected void updateTimer(object sender, EventArgs e)
+        private void updateTimer(object sender, EventArgs e)
         {
             G_Form.DrawImage(Images, new Point(0, 0));
             DrawBg();
@@ -254,32 +321,31 @@ namespace TopDown__OOP
             {
                 if (entity is Enemy)
                 {
-                    entity.dx = (int)(this.hero.x - entity.x);
-                    entity.dy = (int)(this.hero.y - entity.y);
-                    entity.dirVector.X = (this.hero.x - entity.x);
-                    entity.dirVector.Y = (this.hero.y - entity.y);
-                    entity.dirVector.Normalize();
+                    entity.SetDirection((int)(this.hero.x - entity.x), (int)(this.hero.y - entity.y));
+                    entity.SetVector((this.hero.x - entity.x), (this.hero.y - entity.y));
                 }
                 entity.Draw();
                 entity.Move();
             }
             hero.DrawAmmo(ammoFont);
-            watchCursor(Form1.MousePosition.X - form1.Location.X, Form1.MousePosition.Y - form1.Location.X);
+            
             DrawHealth();
             DrawScore();
+            
             DrawCurrentWave();
             collisionCheck();
         }
 
 
-        private void GetAttack(object sender, MouseEventArgs e)
+        public void GetAttack(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Left)
             {
-                onAttack(hero.x + hero.PlayerImg.Width / 2, hero.y + hero.PlayerImg.Height / 2, hero.dx, hero.dy);
+                if (hero.currGun.ammo!=0 || hero.currGun.currAmmo!=0)
+                onAttack?.Invoke(hero.x + hero.PlayerImg.Width / 2, hero.y + hero.PlayerImg.Height / 2, hero.dx, hero.dy);
                 if (hero.isGunChosen == false)
                     hero.ChangeGun("pistol");
-
+                hero.checkAmmo(this, false);
             }
         }
         public void Start()
@@ -288,14 +354,12 @@ namespace TopDown__OOP
             upd.Start();
         }
 
-        
 
         public void watchCursor(int posX, int posY)
         {
-            this.hero.dx = (int)(posX - this.hero.x);
-            this.hero.dy = (int)(posY - this.hero.y);
-
+            this.hero.SetDirection(posX - (int)this.hero.x, posY - (int)this.hero.y);
         }
+
         public void CreateTimer()
         {
             spawnTimer = new Timer();
@@ -305,12 +369,19 @@ namespace TopDown__OOP
             upd.Interval = 40;
             upd.Tick += new EventHandler(updateTimer);
             hero.currGun.CreateTimer();
+            hero.CreateTimer();
+            waveTimer = new Timer();
+            waveTimer.Interval = 30;
+            waveTimer.Tick += new EventHandler(changeLevel);
+            deathTimer = new Timer();
+            deathTimer.Interval = 40;
+            deathTimer.Tick += new EventHandler(drawDeathScreen);
         }
-        public void CreateGraphics(Form form)
+        public void CreateGraphics()
         {
-            form1 = form;
+            
             Images = new Bitmap(1024, 768);
-            G_Form = form.CreateGraphics();
+            //G_Form = form.CreateGraphics();А
             G_Bitmap = Graphics.FromImage(Images);
             G_Form.DrawImage(Images, new Point(0, 0));
             Background = Properties.Resources.background;
@@ -322,6 +393,7 @@ namespace TopDown__OOP
         }
         public void ReBuild()
         {
+            hero.onDie += showDeathScreen;
             foreach (GunEntity gun in hero.guns)
             {
                 onAttack -= gun.Shoot;

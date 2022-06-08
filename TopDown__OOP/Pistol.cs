@@ -13,18 +13,14 @@ namespace TopDown__OOP
     public class Pistol:GunEntity
     {
         [NonSerialized] Image bulletImg;
-        [NonSerialized] Graphics Map;
 
-        int speed;
-
-        public Pistol(int damage, int rangeOfAttack, int ammo, int reloadTime, Graphics G_Bitmap, int speed) : base(damage, rangeOfAttack, ammo, reloadTime, speed)
-        {
-            
-            
-           
+        public Pistol(int damage, int rangeOfAttack, int ammo, int reloadTime, Graphics G_Bitmap, int speed) : base(damage, rangeOfAttack, ammo, reloadTime, G_Bitmap, speed)
+        {           
             this.damage = damage;
             this.rangeOfAttack = rangeOfAttack;
             speed = 30;
+            this.clip = 9;
+            this.ammo = 200000;
             Map = G_Bitmap;
             this.currAmmo = ammo;
             this.reloadTime = reloadTime;
@@ -36,6 +32,7 @@ namespace TopDown__OOP
             bullets.Add(new Bullet(x, y, dx, dy, speed, Map, bulletImg));
             testFlight.Start();
             currAmmo -= 1;
+
         }
 
         public override void CreateBullet()

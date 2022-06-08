@@ -15,15 +15,14 @@ namespace TopDown__OOP
     [Serializable]
     class Enemy : BaseCharacter
     {
-        [NonSerialized]Image EnemyImg;
-        [NonSerialized]System.Windows.Forms.Timer t;
-        [NonSerialized]GraphicsUnit units = GraphicsUnit.Point;
+        [NonSerialized]private Image EnemyImg;
+        [NonSerialized]private System.Windows.Forms.Timer t;
+        [NonSerialized]private GraphicsUnit units = GraphicsUnit.Point;
         //public Vector dirVector;
         //public bool isAttack { get; set; }
-        int speed = 2;
         private System.Drawing.Point drawPoint;
 
-        public int Condition { get; set; }
+        private int Condition { get; set; }
         public Enemy(double x, double y, int dx, int dy, Graphics G_Bitmap) : base(x, y, dx, dy, G_Bitmap)
         {
             this.EnemyImg = Properties.Resources.zombie_1;
@@ -33,6 +32,7 @@ namespace TopDown__OOP
             this.hitbox = Rectangle.Round(this.hitbox_base);
             this.x = x;
             this.y = y;
+            this.speed = 2;
             health = 50;
             this.dx = dx;
             this.dy = dy;
@@ -77,13 +77,13 @@ namespace TopDown__OOP
                 G_Bitmap.DrawImage(Z, drawPoint);
                 this.hitbox.X = (int)this.x;
                 this.hitbox.Y = (int)this.y;
-                G_Bitmap.DrawRectangle(Pens.Red, this.hitbox);
+                
                 
 
             }
         }
 
-        public override void RunAnim()
+        protected override void RunAnim()
         {
             if (Condition == 0)
             {
@@ -117,9 +117,10 @@ namespace TopDown__OOP
             }
         }
 
-        public override void Die()
+        public override void GetHit(int damage)
         {
-
+            base.GetHit(damage);
+            this.speed -= 0.1;
         }
 
         public override void CreateGraphics(Graphics G_Bitmap)

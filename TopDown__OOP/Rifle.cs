@@ -14,15 +14,15 @@ namespace TopDown__OOP
     {
         
         [NonSerialized]Image bulletImg;
-        [NonSerialized] Graphics Map;
-        int speed;
-        public Rifle(int damage, int rangeOfAttack, int ammo, int reloadTime, Graphics G_Bitmap, int speed): base(damage, rangeOfAttack, ammo, reloadTime, speed)
+        
+        public Rifle(int damage, int rangeOfAttack, int ammo, int reloadTime, Graphics G_Bitmap, int speed): base(damage, rangeOfAttack, ammo, reloadTime, G_Bitmap, speed)
         {
             Map = G_Bitmap;
             this.damage = damage;
             this.rangeOfAttack = rangeOfAttack;
             this.ammo = ammo;
             this.currAmmo = 30;
+            this.clip = 30;
             this.reloadTime = reloadTime;
             speed = 40;
             bulletImg = Properties.Resources.gun_bullet;
@@ -34,6 +34,7 @@ namespace TopDown__OOP
 
             bullets.Add(new Bullet(x, y, dx, dy, speed, Map, bulletImg));
             testFlight.Start();
+            currAmmo -= 1;
         }
 
         public override void CreateBullet()

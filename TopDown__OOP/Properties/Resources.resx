@@ -151,9 +151,6 @@
   <data name="gun_bullet" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\gun_bullet (1).png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="player_chaingun" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\player_chaingun.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="zombie_2" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\zombie-2 (1).png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -177,5 +174,8 @@
   </data>
   <data name="Overdrive_Sunset" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Overdrive Sunset.otf;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="player_chaingun" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\player_chaingun.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

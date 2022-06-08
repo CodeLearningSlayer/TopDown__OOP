@@ -5,29 +5,33 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
-using System.Threading;
+
 using System.Windows.Forms;
 using System.Windows;
 
 
 namespace TopDown__OOP
-{   
+{
     [Serializable]
     public class Player : BaseCharacter
     {
         [NonSerialized] public Image PlayerImg;
         [NonSerialized] System.Windows.Forms.Timer t;
-        public static bool goLeft;
-        public static bool goRight;
+        public bool goLeft;
+        public bool goRight;
+        public bool goUp;
+        public bool goDown;
+        private bool isReloaded { get; set; }
         public bool isGunChosen;
-        public static bool goUp;
-        public static bool goDown;
-        public event Action onDie;  
+        private Game game;
+        public bool gameInit = false;
+        public event Action onDie;
+        [NonSerialized] public Rectangle reloadBar;
+        [NonSerialized] private Timer reload;
         public List<GunEntity> guns;
         public GunEntity currGun;
-        [NonSerialized] GraphicsUnit units = GraphicsUnit.Point;
-        int speed = 5;
-        public int Condition { get; set; }
+        [NonSerialized] private GraphicsUnit units = GraphicsUnit.Point;
+        private int Condition { get; set; }
         public Player(double x, double y, int dx, int dy, Graphics G_Bitmap) : base(x, y, dx, dy, G_Bitmap)
         {
             guns = new List<GunEntity>();
@@ -40,48 +44,53 @@ namespace TopDown__OOP
             t.Tick += new EventHandler(t_tick);
             t.Interval = 200;
             health = 100;
+            this.speed = 5;
+            isReloaded = true;
             this.x = x;
-            this.y = y;
-            this.dx = 0;
             this.dy = 0;
+            reloadBar = new Rectangle((int)this.x, (int)this.y + 10, 50, 15);
             dirVector = new Vector(dx, dy);
-            currGun = new Pistol(10, 15, 100, 5, G_Bitmap, 30);
+            currGun = new Pistol(10, 15, 9, 5, G_Bitmap, 30);
             guns.Add(currGun);
-            guns.Add(new Rifle(100, 15, 30, 6, G_Bitmap, 40));
+            guns.Add(new Rifle(100, 15, 90, 6, G_Bitmap, 40));
             t.Start();
             Condition = 0;
+            reload = new Timer();
+            reload.Tick += new EventHandler(ReloadGun);
+            reload.Interval = 40;
+
         }
         protected void t_tick(object sender, EventArgs eArgs)
         {
             this.RunAnim();
-            // слежение за курсором
         }
-        //public override void Attack()
-        //{
-        //    //currGun.Shoot();
-        //}
+
+        public void AddAmmo()
+        {
+            foreach (GunEntity gun in guns)
+            {
+                gun.ammo += 30;
+            }
+        }
+
 
         public override void Draw()
         {
-            Bitmap bmpToRotate = new Bitmap(this.PlayerImg.Width, this.PlayerImg.Height);
+            Bitmap bmpToRotate = new Bitmap(this.PlayerImg.Width + 10, this.PlayerImg.Height + 10);
             using (bmpToRotate)
             {
                 double angle = Math.Atan2(this.dy, this.dx) * 180 / Math.PI + (-90) * Math.PI / 180;
-                //Console.WriteLine(dy);
-                //Console.WriteLine(dx);
-                //Console.WriteLine(angle);
                 Graphics gfx = Graphics.FromImage(bmpToRotate);
                 gfx.TranslateTransform((float)bmpToRotate.Width / 2, (float)bmpToRotate.Height / 2);
                 gfx.RotateTransform((float)angle);
                 gfx.TranslateTransform(-(float)bmpToRotate.Width / 2, -(float)bmpToRotate.Height / 2);
-                gfx.DrawImage(PlayerImg, new System.Drawing.Point(0, 0));
+                gfx.DrawImage(PlayerImg, new System.Drawing.Point(6, 6));
                 gfx.Dispose();
                 this.hitbox.X = (int)this.x;
                 this.hitbox.Y = (int)this.y;
                 G_Bitmap.DrawImage(bmpToRotate, new System.Drawing.Point((int)this.x, (int)this.y));
-                G_Bitmap.DrawRectangle(Pens.Blue, this.hitbox);
+                //G_Bitmap.DrawRectangle(Pens.Blue, this.hitbox);
             }
-            //G_Bitmap.DrawImage(PlayerImg, new Point(this.x, this.y));
         }
 
         public void DrawAmmo(Font myFont)
@@ -93,9 +102,9 @@ namespace TopDown__OOP
 
         }
 
-        public override void RunAnim()
+        protected override void RunAnim()
         {
-            if ((Player.goUp || Player.goDown || Player.goLeft || Player.goRight) && isGunChosen == false) {
+            if ((goUp || goDown || goLeft || goRight) && isGunChosen == false) {
                 if (Condition == 0)
                 {
                     PlayerImg = Properties.Resources.walk_1;
@@ -138,14 +147,14 @@ namespace TopDown__OOP
         public override void Move()
         {
             
-            if (Player.goUp || goDown) {
+            if (goUp || goDown) {
 
-                if (Player.goUp == true)
+                if (goUp == true)
                 {
                     this.dirVector.Y = -1;
                     
                 }
-                if (Player.goDown == true)
+                if (goDown == true)
                 {
                     this.dirVector.Y = 1;
                     
@@ -155,13 +164,13 @@ namespace TopDown__OOP
             {
                 this.dirVector.Y = 0;
             }
-            if (Player.goLeft || goRight) {
+            if (goLeft || goRight) {
 
-                if (Player.goLeft == true)
+                if (goLeft == true)
                 {
                     this.dirVector.X = -1;
                 }
-                if (Player.goRight == true)
+                if (goRight == true)
                 {
                     this.dirVector.X = 1;
                 }
@@ -192,38 +201,46 @@ namespace TopDown__OOP
             this.y += speed * this.dirVector.Y;
 
         }
-        public override void Die()
-        {
+        //public override void Die()
+        //{
 
-        }
+        //}
 
-        public void GetHit(int damage)
+        public override void GetHit(int damage)
         {
-            health -= damage;
+            base.GetHit(damage);
             if (health < 0)
             {
-                Application.Exit();
+                Die();
             }
+        }
+
+        private void Die()
+        {
+            onDie.Invoke();
         }
 
         public void ChangeGun(string gun)
         {
-            if (gun == "pistol")
+            if (gun == "pistol" && isReloaded)
             {
                 this.PlayerImg = Properties.Resources.player_9mmhandgun;
                 this.speed = 4;
+                game.onAttack -= currGun.Shoot;
                 currGun = guns[0];
-                 
+                game.onAttack += currGun.Shoot;
                 isGunChosen = true;
 
             }
-            else if (gun == "rifle")
+            else if (gun == "rifle" && isReloaded)
             {
                 if (guns.Count >= 2)
                 {
                     this.PlayerImg = Properties.Resources.player_chaingun;
                     this.speed = 3;
+                    game.onAttack -= currGun.Shoot;
                     currGun = guns[1];
+                    game.onAttack += currGun.Shoot;
                     isGunChosen = true;
 
                 }
@@ -244,7 +261,7 @@ namespace TopDown__OOP
             }
             else if (gun == "no gun")
             {
-                //this.PlayerImg = Properties.Resources.player_pumpgun_stand;
+                
                 isGunChosen = false;
                 this.speed = 5;
                 this.PlayerImg = Properties.Resources.walk_1;
@@ -252,30 +269,78 @@ namespace TopDown__OOP
             Console.WriteLine(currGun);
         }
 
-        public void ReloadGun()
+        private void ReloadGun(object sender, EventArgs e)
         {
+            G_Bitmap.DrawRectangle(new Pen(Brushes.DarkRed), reloadBar);
+            reloadBar.X = (int)this.x - 5;
+            reloadBar.Y = (int)this.y - 5;
+            G_Bitmap.FillRectangle(Brushes.Red, new Rectangle(reloadBar.X, reloadBar.Y, reloadBar.Width, reloadBar.Height));
+            G_Bitmap.FillRectangle(Brushes.Green, new Rectangle(reloadBar.X, reloadBar.Y, (int)Math.Round((double)currGun.currAmmo / currGun.clip * reloadBar.Width), reloadBar.Height));
+            if (currGun.currAmmo < currGun.clip && currGun.currAmmo < currGun.ammo && currGun.ammo>0)
+            {
+                currGun.Reload();
+            }
+            else
+            {
+                reload.Stop();
+                stopReload();
+                isReloaded = true;
+                currGun.ammo -= currGun.Reload();
+                currGun.bulletsLoaded = 0;
+            }
+        }
 
+        public void checkAmmo(Game sender, bool reloadPressed)
+        {
+            if (currGun.currAmmo <= 0 && currGun.ammo > 0 || reloadPressed)
+            {
+                reload.Start();
+                isReloaded = false;
+                sender.onAttack -= currGun.Shoot;
+            }
+            if (currGun.currAmmo <= 0 && currGun.ammo == 0)
+            {
+                sender.onAttack -= currGun.Shoot;
+            }
+            
+        }
+
+        private void stopReload()
+        {
+            if (gameInit)
+                Console.WriteLine("можно стрелять");
+                game.onAttack += currGun.Shoot;
         }
 
         public void GetWeapon(GunEntity gun)
         {
             guns.Add(gun);
-            
         }
 
+        public void initGame(Game game)
+        {
+            this.game = game;
+        }
         public void CreateTimer()
         {
+            onDie = null;
             t = new System.Windows.Forms.Timer();
             t.Tick += new EventHandler(t_tick);
             t.Interval = 200;
+            reload = new Timer();
+            reload.Tick += new EventHandler(ReloadGun);
+            reload.Interval = 40;
         }
         public override void CreateGraphics(Graphics G_Bitmap)
         {
             base.CreateGraphics(G_Bitmap);
-            this.PlayerImg = Properties.Resources.walk_1;
+            //this.PlayerImg = Properties.Resources.walk_1;
+            Console.WriteLine(reloadBar);
             Bitmap bmpToRotate = new Bitmap(this.PlayerImg.Width, this.PlayerImg.Height);
+            reloadBar = new Rectangle((int)this.x, (int)this.y + 10, 50, 15);
+
         }
-        
+
         public void CreateBullets()
         {
             foreach (GunEntity entity in guns.ToArray())

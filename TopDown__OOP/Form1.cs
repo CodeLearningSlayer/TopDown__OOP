@@ -15,7 +15,8 @@ namespace TopDown__OOP
 {
     public partial class Form1 : Form
     {
-        Game Shooter;
+        private Timer watchMouse;
+        private Game Shooter;
         public Form1()
         {
             InitializeComponent();
@@ -24,43 +25,57 @@ namespace TopDown__OOP
                           ControlStyles.AllPaintingInWmPaint,
                           true);
             this.UpdateStyles();
-        
+            
         }
         
         private void Form1_Load(object sender, EventArgs e)
         {
             Form2 TopDown = new Form2();
+            TopDown.Focus();
+            
             TopDown.ShowDialog();
         }
 
         private void Form1_Shown(object sender, EventArgs e)
         {
-            Shooter = new Game(this); //передать форму this
-            Shooter.Start();
-          
+            watchMouse = new Timer();
+            watchMouse.Interval = 40;
+            watchMouse.Tick += new EventHandler(watchCursor);
+            watchMouse.Start();
+
+            using (Shooter = new Game(this.CreateGraphics()))
+            {
+                this.KeyDown += new KeyEventHandler(Shooter.KeyDown);
+                this.MouseDown += new MouseEventHandler(Shooter.GetAttack);
+                Shooter.Start();
+            }
+
+        }
+
+        private void watchCursor(object sender, EventArgs e)
+        {
+            Shooter.watchCursor(Form1.MousePosition.X - this.Location.X, Form1.MousePosition.Y - this.Location.Y);
         }
 
         private void Form1_KeyDown(object sender, KeyEventArgs e)
         {
             //метод отправки в Game
             //direction 
-            
-            
             if (e.KeyCode == Keys.W)
             {
-                Player.goUp = true;
+                Shooter.hero.goUp = true;
             }
             if (e.KeyCode == Keys.A)
             {
-                Player.goLeft = true;
+                Shooter.hero.goLeft = true;
             }
             if (e.KeyCode == Keys.S)
             {
-                Player.goDown = true;
+                Shooter.hero.goDown = true;
             }
             if (e.KeyCode == Keys.D)
             {
-                Player.goRight = true;
+                Shooter.hero.goRight = true;
             }
         }
 
@@ -71,29 +86,50 @@ namespace TopDown__OOP
         {
             if (e.KeyCode == Keys.W)
             {
-                Player.goUp = false;
+                Shooter.hero.goUp = false;
             }
             if (e.KeyCode == Keys.A)
             {
-                Player.goLeft = false;
+                Shooter.hero.goLeft = false;
             }
             if (e.KeyCode == Keys.S)
             {
-                Player.goDown = false;
+                Shooter.hero.goDown = false;
             }
             if (e.KeyCode == Keys.D)
             {
-                Player.goRight = false;
+                Shooter.hero.goRight = false;
             }
             if (e.KeyCode == Keys.D5)
             {
+                if (Shooter.canISave)
                 SaveGame();
-       
+            
             }
             if (e.KeyCode == Keys.D6)
             {
                 Shooter.upd.Stop();
+                
                 LoadGame();
+            }
+            else if (e.KeyCode == Keys.Enter)
+            {
+                if (Shooter.isGameOver)
+                {
+                    watchMouse.Stop();
+                    //Shooter.hero = null;
+                    this.Shooter.upd.Stop();
+                    this.Shooter.G_Form.Dispose();
+                    Shooter.Dispose();
+                    this.MouseDown -= Shooter.GetAttack;
+                    this.KeyDown -= Shooter.KeyDown;
+                    Shooter = new Game(this.CreateGraphics());
+                    this.KeyDown += Shooter.KeyDown;
+                    this.MouseDown += Shooter.GetAttack;
+                    GC.Collect();
+                    watchMouse.Start();
+                    Shooter.Start();
+                }
             }
         }
 
@@ -106,25 +142,33 @@ namespace TopDown__OOP
             Console.WriteLine("Saved");
             FileStream FS = new FileStream("save.zlp", FileMode.Create);
             BinaryFormatter BF = new BinaryFormatter();
-            BF.Serialize(FS, Shooter.hero);
+            BF.Serialize(FS, Shooter);
             FS.Close();
         }
 
         private void LoadGame()
-        {
-            //if (openFileDialog1.ShowDialog() == DialogResult.Cancel)
-            //    return;
-            // получаем выбранный файл
-            //string filename = openFileDialog1.FileName;
+        { 
             Console.WriteLine("Loaded");
+            Game gameHelper;
             FileStream FS = File.OpenRead("save.zlp");
             BinaryFormatter BF = new BinaryFormatter();
-            Shooter.hero = (Player)BF.Deserialize(FS);
+            gameHelper = (Game)BF.Deserialize(FS);
+            Shooter.difficulty = gameHelper.difficulty;
+            Shooter.hero = gameHelper.hero;
+            Shooter.hero.reloadBar = gameHelper.hero.reloadBar;
+            Shooter.hero.currGun = gameHelper.hero.currGun;
+            Shooter.chngGun = gameHelper.chngGun;
+            Shooter.hero.gameInit = false;
+            Shooter.entities = gameHelper.entities;
+            Console.WriteLine(Shooter.chngGun);
+            Shooter.hero.ChangeGun(Shooter.chngGun);
+            Shooter.isSerialized = true;
+            Shooter.CreateGraphics();
             Shooter.CreateTimer();
-            Shooter.CreateGraphics(this);
             Shooter.ReBuild();
+            Shooter.score = gameHelper.score;            
             Shooter.Start();
-            
+            Shooter.isSerialized = false;
         }
     }
 }

@@ -13,14 +13,19 @@ namespace TopDown__OOP
     {
         public int damage;
         public int rangeOfAttack;
+        public int speed;
+        public int clip;
+        public int bulletsLoaded;
+
         public virtual int ammo { get; set; }
         public int currAmmo;
         public int reloadTime;
         public int bulletSpeed;
         [NonSerialized] public List<Bullet> bullets;
-        [NonSerialized] public Timer testFlight;
-        [NonSerialized] Timer reload;
-        public GunEntity(int damage, int rangeOfAttack, int ammo, int reloadTime, int speed)
+        [NonSerialized] protected Timer testFlight;
+        [NonSerialized] protected Graphics Map;
+        private int time;
+        public GunEntity(int damage, int rangeOfAttack, int ammo, int reloadTime, Graphics G_Bitmap, int speed)
         {
             bullets = new List<Bullet>();
             testFlight = new Timer();
@@ -29,29 +34,30 @@ namespace TopDown__OOP
             this.damage = damage;
             this.rangeOfAttack = rangeOfAttack;
             this.ammo = ammo;
+            this.Map = G_Bitmap;
             this.currAmmo = ammo;
             this.reloadTime = reloadTime;
             this.bulletSpeed = speed;
-            reload = new Timer();
-            reload.Tick += new EventHandler(Reloading);
-            reload.Interval = 40;
+            
         }
         
-        public void Reload()
+        public int Reload()
         {
-            if (currAmmo < ammo)
+            time += 1;
+            if (time == 5)
             {
-                reload.Start();
+                if (ammo > 0)
+                {
+                    bulletsLoaded += 1;
+                    currAmmo += 1;
+                    time = 0;
+                }
+                
             }
+            return bulletsLoaded;
+            
         }
-        public abstract void Shoot(double x, double y, int dx, int dy);
-        
-
-        public void Reloading(object sender, EventArgs e)
-        {
-            this.currAmmo = 30;
-            reload.Stop();
-        }
+        public abstract void Shoot(double x, double y, int dx, int dy); // передавать координаты персонажа для выстрела
 
         public void CreateBullets()
         {
